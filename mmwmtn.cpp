@@ -83,7 +83,6 @@ void get_price(char* min_Price,char* max_Price){
 uint64_t minPrice=atoll(min_Price);
 uint64_t maxPrice=atoll(max_Price);
 uint8_t number_of_digits=strlen(max_Price);
-uint8_t number_of_nines=0;
 char numbers[number_of_digits+1];
 uint64_t i=0;
 uint8_t flag=0;
@@ -105,21 +104,82 @@ if(flag) numbers[i]='9';
 i++;
 }
 }
-numbers[i]='\0';
-printf("%s\n",numbers);
+//numbers[i]='\0';
+//printf("%s\n",numbers);
 
-while(!flag){
+//uint8_t number_of_nines=0;
+uint8_t max_index=0;
+uint8_t max_index_digit=0;
+
+uint8_t non_nine_mapping[number_of_digits];
+memset(non_nine_mapping,0,number_of_digits);
 i=0;
-maxPrice-=10;
-sprintf(max_Price,"%lld",maxPrice);
-number_of_digits=strlen(max_Price);
+// generate non_nine_mapping
 while(i<number_of_digits){
-if(max_Price[i]=='9') flag=1;
-if((max_Price[i]!='9')&&(!flag)) numbers[i]=max_Price[i];
+//if(max_Price[i]=='9') non_nine_mapping[i]=0;
+if(max_Price[i]!='9'){
+non_nine_mapping[i]=1; 
+//number_of_nines++;
+if((i>0)&&(non_nine_mapping[i-1]==0)) max_index=i-1;
+}
+printf(" %d ",non_nine_mapping[i]);
+i++;
+}
+printf("\n%d max_index\n",max_index);
+
+
+//while(!flag){
+if(max_index>0){
+i=max_index;
+max_index_digit=atoi((const char*)max_Price[i]);
+max_index_digit--;
+//char* here=nullptr;
+//sprintf(here,"%d",max_index_digit);
+max_Price[i]=(char)max_index_digit;
+while(i+1<number_of_digits){
 if(flag) numbers[i]='9';
 i++;
 }
 }
+
+
+
+
+// scan from left
+
+// max_Price[i]!='9'
+// sprintf(max_Price,"%lld",maxPrice);
+// number_of_digits=strlen(max_Price);
+
+
+// while(!flag){
+// i=0;
+// maxPrice-=10;
+// sprintf(max_Price,"%lld",maxPrice);
+// number_of_digits=strlen(max_Price);
+// while(i<number_of_digits){
+// if(max_Price[i]=='9') flag=1;
+// if((max_Price[i]!='9')&&(!flag)) numbers[i]=max_Price[i];
+// if(flag) numbers[i]='9';
+// i++;
+// }
+// }
+
+
+
+
+// while(number_of_nines-1){
+
+// maxPrice-=10;
+// sprintf(max_Price,"%lld",maxPrice);
+// number_of_digits=strlen(max_Price);
+// while(i<number_of_digits){
+// if(max_Price[i]=='9') flag=1;
+// if((max_Price[i]!='9')&&(!flag)) numbers[i]=max_Price[i];
+// if(flag) numbers[i]='9';
+// i++;
+// }
+// }
 //number_of_nines
 
 numbers[i]='\0';
@@ -138,7 +198,7 @@ return 0;
 
 // g++ mmwmtn.cpp -o mmwmtn; ./mmwmtn 20 25; ./mmwmtn 460 680; ./mmwmtn 1255 2999; ./mmwmtn 10 3000000000; ./mmwmtn 18696 18702; ./mmwmtn 80999 89099; echo "\n\n19\n599\n2999\n2999999999\n18699\n88999"
 
-// case_0 20 25 =25 -> should be 19
+// case_0 20 25 =25 need to consider min
 // case_1 460 680 =599 not checking all larger possible 9s
 // case_2 1255 2999 =2999
 // case_3 10 3000000000 =2999999999
