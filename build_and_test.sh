@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Copyright (c) 2023 Michael Neill Hartman. All rights reserved.
+# mnh_license@proton.me
+# https://github.com/hartmanm
+
 gcc mmwmtn.c -o mmwmtn
 sep(){
 echo "------------------"
