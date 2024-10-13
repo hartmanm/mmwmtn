@@ -1,3 +1,9 @@
+/*
+Copyright (c) 2023 Michael Neill Hartman. All rights reserved.
+mnh_license@proton.me
+https://github.com/hartmanm
+*/
+
 #include <iostream>
 
 // min max with max trailing nines
