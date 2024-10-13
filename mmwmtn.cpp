@@ -5,6 +5,7 @@ https://github.com/hartmanm
 */
 
 #include <iostream>
+#include <cstring>
 
 // min max with max trailing nines
 
