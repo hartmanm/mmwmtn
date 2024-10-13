@@ -6,136 +6,63 @@ https://github.com/hartmanm
 
 #include <stdio.h>
 #include <stdint.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
-uint8_t get_price(char* min_Price, char* max_Price) {
-    uint8_t number_of_digits = strlen(max_Price);
-    char numbers[number_of_digits + 1];
-    
-    if (number_of_digits == 1) {
-        numbers[0] = max_Price[0];
-        numbers[number_of_digits] = '\0';
-        printf("numbers:\n%s\n\n", numbers);
-        return 0;
-    }
-
-    uint8_t maxPrice_digit = 0;
-    if (number_of_digits == 2) {
-        if (min_Price[0] == max_Price[0]) {
-            numbers[0] = max_Price[0];
-            numbers[1] = max_Price[1];
-            numbers[number_of_digits] = '\0';
-            printf("numbers:\n%s\n\n", numbers);
-            return 0;
-        } 
-        if (min_Price[0] != max_Price[0]) {
-            maxPrice_digit = (uint8_t)(max_Price[0]);
-            if (maxPrice_digit > 1) {
-                maxPrice_digit--;
-                if (maxPrice_digit > 1) {
-                    printf("maxPrice_digit=%d\n", maxPrice_digit);
-                    numbers[0] = (char)maxPrice_digit; 
-                    numbers[1] = '9';
-                    numbers[number_of_digits] = '\0';
-                    printf("numbers:\n%s\n\n", numbers);
-                    return 0;
-                }
-            } else {
-                printf("todo\n");
-            }
-        }
-    }
-
-    uint64_t minPrice = atoll(min_Price);
-    uint64_t maxPrice = atoll(max_Price);
-    maxPrice_digit = 0;
-
-    uint8_t flag = 0;
-    uint8_t max_index = 0;
-    uint8_t contains_nine = 0;
-    uint8_t non_nine_mapping[number_of_digits];
-    memset(non_nine_mapping, 0, number_of_digits);
-
-    for (uint64_t i = 0; i < number_of_digits; i++) {
-        if (max_Price[i] != '9') {
-            non_nine_mapping[i] = 1; 
-            if (i > 0 && non_nine_mapping[i - 1] == 0) max_index = i - 1;
-        }
-        if (max_Price[i] == '9') contains_nine = 1;
-        printf(" %d ", non_nine_mapping[i]);
-    }
-    
-    printf("max_index %d\nnumber_of_digits %d\ncontains_nine %d\n", max_index, number_of_digits, contains_nine);
-    printf("min %s\nmax %s\n", min_Price, max_Price);
-
-    uint8_t leading_match_index = 0;
-    uint8_t ended = 0;
-
-    for (uint64_t i = 0; i < number_of_digits; i++) {
-        if (min_Price[i] == max_Price[i] && !ended) leading_match_index++;
-        if (min_Price[i] != max_Price[i]) ended = 1;
-    }
-    printf("leading_match_index %d\n", leading_match_index);
-    
-    if (leading_match_index + 1 == number_of_digits) {
-        strncpy(numbers, max_Price, number_of_digits);
-        numbers[number_of_digits] = '\0';
-        printf("numbers:\n%s\n\n", numbers);
-        return 0;
-    }
-
-    uint8_t done = 0;
-    uint64_t i = leading_match_index;
-
-    if (maxPrice_digit == 0) {
-        numbers[i - 1] = '0';
-        maxPrice_digit = (uint8_t)(max_Price[i]);
-        maxPrice_digit--;
-        printf("maxPrice_digit=%d\n", maxPrice_digit);
-        numbers[i] = (char)maxPrice_digit; 
-        i++;
-
-        while (i < number_of_digits) {
-            numbers[i] = '9';
-            i++;
-        }
-        numbers[i] = '\0';
-        done = 1;
-    }
-
-    if (!contains_nine) {
-        printf("decrement_leading_digit\n");
-        maxPrice_digit = (uint8_t)(max_Price[i]);
-        maxPrice_digit--;
-        if (maxPrice_digit > 1) {
-            printf("maxPrice_digit=%d\n", maxPrice_digit);
-            numbers[i] = (char)maxPrice_digit; 
-            i++;
-
-            while (i < number_of_digits) {
-                numbers[i] = '9';
-                i++;
-            }
-            numbers[i] = '\0';
-            done = 1;
-        }
-    }
-
-    if (!done) {
-        printf("todo\n");
-    }
-
-    numbers[i] = '\0';
-    printf("numbers:\n%s\n\n", numbers);
-    return 9;
+void get_price(char* min_Price, char* max_Price){
+uint64_t minPrice = atoll(min_Price);
+uint64_t maxPrice = atoll(max_Price);
+uint8_t number_of_digits = strlen(max_Price);
+uint8_t number_of_nines = 0;
+char numbers[number_of_digits + 1];
+uint64_t i = 0;
+uint8_t flag = 0;
+while(i < number_of_digits){
+if (max_Price[i] == '9') flag = 1;
+if ((max_Price[i] != '9') && (!flag)) numbers[i] = max_Price[i];
+if (flag) numbers[i] = '9';
+i++;
 }
-
+while(!flag){
+i = 0;
+maxPrice--;
+sprintf(max_Price, "%llu", maxPrice);
+number_of_digits = strlen(max_Price);
+while (i < number_of_digits) {
+if (max_Price[i] == '9') flag = 1;
+if ((max_Price[i] != '9') && (!flag)) numbers[i] = max_Price[i];
+if (flag) numbers[i] = '9';
+i++;
+}
+}
+numbers[i] = '\0';
+while (!flag){
+i = 0;
+maxPrice -= 10;
+sprintf(max_Price, "%llu", maxPrice);
+number_of_digits = strlen(max_Price);
+while (i < number_of_digits) {
+if (max_Price[i] == '9') flag = 1;
+if ((max_Price[i] != '9') && (!flag)) numbers[i] = max_Price[i];
+if (flag) numbers[i] = '9';
+i++;
+}
+}
+numbers[i] = '\0';
+printf("%s\n", numbers);
+}
 int main(int number_of_parameters, char* parameters[]) {
-    if (number_of_parameters > 2) {
-        get_price(parameters[1], parameters[2]);
-    }
-    return 0; 
+if (number_of_parameters > 2) {
+get_price(parameters[1], parameters[2]);
 }
-
-// gcc -o mmwmtn mmwmtn.c 
+return 0; 
+}
+/*
+bash build _and_test.sh
+case_0 20 25 =25 -> should be 19
+case_1 460 680 =599 not checking all larger possible 9s
+case_2 1255 2999 =2999
+case_3 10 3000000000 =2999999999
+case_4 18696 18702 =18699
+case_5 80999 89099 =88999 too big
+*/
